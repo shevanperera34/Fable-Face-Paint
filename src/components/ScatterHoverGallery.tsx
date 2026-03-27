@@ -14,6 +14,7 @@ type ScatterHoverGalleryProps = {
   cardWidth?: number;
   cardHeight?: number;
   visibleCount?: number;
+  className?: string;
 };
 
 const chunkArray = <T,>(items: T[], chunkSize: number): T[][] => {
@@ -39,6 +40,7 @@ export default function ScatterHoverGallery({
   cardWidth = 240,
   cardHeight = 170,
   visibleCount = 6,
+  className,
 }: ScatterHoverGalleryProps) {
   const [isHover, setIsHover] = useState(false);
   const [isFirstRender, setIsFirstRender] = useState(true);
@@ -123,7 +125,7 @@ export default function ScatterHoverGallery({
 
   return (
     <div
-      className={`ffp-gallery ${isHover ? "ffp-gallery-display" : ""}`}
+      className={`ffp-gallery ${className ?? ""} ${isHover ? "ffp-gallery-display" : ""}`.trim()}
       onMouseEnter={() => setIsHover(true)}
       onMouseLeave={() => setIsHover(false)}
     >

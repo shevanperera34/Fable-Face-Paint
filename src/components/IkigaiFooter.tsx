@@ -13,12 +13,12 @@ const linkBase = "text-white/70 hover:text-[#EDE6F7] transition";
 const btnPrimary =
   "inline-flex items-center justify-center rounded-xl px-4 py-2 text-sm font-medium text-white shadow-sm " +
   "transition-all focus:outline-none focus:ring-2 focus:ring-white/20 " +
-  "bg-gradient-to-r from-[#0F2A1D] to-[#D34AA8] " +
-  "hover:from-[#D34AA8] hover:to-[#0B0B0B]";
+  "bg-gradient-to-r from-[#0F3433] to-[#D6B6D4] " +
+  "hover:from-[#D6B6D4] hover:to-[#0F3433]";
 
 const chipBase =
   "rounded-full border border-white/20 bg-white/5 p-2 transition " +
-  "hover:border-[#EDE6F7]/60 hover:bg-gradient-to-r hover:from-[#0F2A1D] hover:to-[#D34AA8] " +
+  "hover:border-[#EDE6F7]/60 hover:bg-gradient-to-r hover:from-[#9A0E63] hover:to-[#D34AA8] " +
   "focus:outline-none focus:ring-2 focus:ring-white/20";
 
 export default function IkigaiFooter({ onNavigate, brandName }: IkigaiFooterProps) {
@@ -30,10 +30,10 @@ export default function IkigaiFooter({ onNavigate, brandName }: IkigaiFooterProp
   };
 
   return (
-    <footer className="relative pt-10 border-t border-[#EDE6F7]/20 bg-[#0F2A1D] overflow-hidden">
+    <footer className="relative pt-10 border-t border-[#EDE6F7]/20 bg-[#9A0E63] overflow-hidden">
       <div aria-hidden className="pointer-events-none absolute inset-0 z-0">
         <LiquidEther
-          colors={["#0F2A1D", "#D34AA8", "#EDE6F7"]}
+          colors={["#9A0E63", "#D34AA8", "#EDE6F7"]}
           mouseForce={20}
           cursorSize={100}
           isViscous={false}
@@ -56,7 +56,7 @@ export default function IkigaiFooter({ onNavigate, brandName }: IkigaiFooterProp
             opacity: 0.55,
           }}
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-[#0F2A1D]/35 via-[#0F2A1D]/65 to-[#0B0B0B]" />
+        <div className="absolute inset-0 bg-gradient-to-b from-[#9A0E63]/35 via-[#9A0E63]/65 to-[#0B0B0B]" />
         <div className="absolute inset-0 bg-[radial-gradient(70%_45%_at_50%_-10%,rgba(237,230,247,0.12),transparent)]" />
       </div>
 
@@ -135,7 +135,7 @@ export default function IkigaiFooter({ onNavigate, brandName }: IkigaiFooterProp
               </div>
 
               <button onClick={() => goTo("contact")} className={btnPrimary}>
-                Start a project
+                Book Now
               </button>
             </div>
           </div>

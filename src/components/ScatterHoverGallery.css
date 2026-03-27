@@ -55,6 +55,39 @@
   transition: transform 0.22s ease, box-shadow 0.22s ease;
 }
 
+.services-gallery-panel .ffp-gallery {
+  height: 100%;
+}
+
+.services-gallery-panel .ffp-gallery__viewport {
+  height: 100%;
+  max-height: none !important;
+  padding-right: 0;
+}
+
+.services-gallery-panel .ffp-gallery__row {
+  justify-content: space-between;
+}
+
+.services-gallery-panel .ffp-gallery__row__image {
+  display: flex;
+  align-items: stretch;
+}
+
+.services-gallery-panel .ffp-postcard {
+  width: 100% !important;
+  margin: 0;
+}
+
+.services-gallery-panel .ffp-postcard__front {
+  padding: 0;
+  background: transparent;
+}
+
+.services-gallery-panel .ffp-postcard__img {
+  border-radius: 10px;
+}
+
 .ffp-postcard {
   transform-style: preserve-3d;
   box-shadow:
