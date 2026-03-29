@@ -11,14 +11,10 @@ import PageFrame, {
   useIsCompactLayout,
 } from "../components/PageFrame";
 import heroBg2 from "../assets/images/hero-bg2.png";
-import milenaImg from "../assets/Website Photos etc./IMG_0316 (3).jpg";
+import milenaImg from "../assets/Website Photos etc_/IMG_0316 (3).jpg";
+import { eventPicHorizontalUrls } from "../generated/imageManifests";
 
-const horizontalEventImageModules = import.meta.glob("../assets/Event pics /horizontal/*.{png,jpg,jpeg,webp,avif,gif,svg}", {
-  eager: true,
-  import: "default",
-}) as Record<string, string>;
-
-const aboutGalleryImages = Object.values(horizontalEventImageModules).sort();
+const aboutGalleryImages = eventPicHorizontalUrls;
 
 const values = [
   {

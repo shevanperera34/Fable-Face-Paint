@@ -142,15 +142,19 @@ export const canonicalPathBySlug: Record<PageSlug, string> = {
 };
 
 type TrackPayload = Record<string, string | number | boolean | null | undefined>;
+
+type WindowWithPosthog = Window & {
+  posthog?: { capture: (e: string, p: Record<string, unknown>) => void };
+};
+
 export function track(event: string, payload?: TrackPayload) {
   if (typeof window !== "undefined") {
-    const w = window as any;
+    const w = window as WindowWithPosthog;
     if (w.posthog?.capture) {
-      w.posthog.capture(event, payload ?? {});
+      w.posthog.capture(event, (payload ?? {}) as Record<string, unknown>);
       return;
     }
   }
-  // eslint-disable-next-line no-console
   console.log("[track]", event, payload ?? {});
 }
 

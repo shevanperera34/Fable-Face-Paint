@@ -17,7 +17,7 @@ import PageFrame, {
 } from "../components/PageFrame";
 import heroBgMain from "../assets/images/hero-bg-main.png";
 import heroBgWhite from "../assets/images/hero-bg-white.png";
-import largeEventsHeroBackground from "../assets/Event pics /horizontal/jpeg-optimizer_20241207_164735.webp";
+import largeEventsHeroBackground from "../assets/Event pics_/horizontal/jpeg-optimizer_20241207_164735.webp";
 import corporateLogo1 from "../assets/Corporate Logos/001ef16f0c7d49c2b60f4a22bf1ff1a1.png";
 import corporateLogo2 from "../assets/Corporate Logos/162-1627127_rec-room-logo-png-transparent-png-removebg-preview.png";
 import corporateLogo3 from "../assets/Corporate Logos/channels4_profile-removebg-preview.png";
@@ -26,6 +26,7 @@ import corporateLogo5 from "../assets/Corporate Logos/images-removebg-preview.pn
 import corporateLogo6 from "../assets/Corporate Logos/images__1_-removebg-preview.png";
 import corporateLogo7 from "../assets/Corporate Logos/Seneca-logo.svg.png";
 import corporateLogo8 from "../assets/Corporate Logos/Untitled design (12).png";
+import { allEventPicsSorted, serviceAssetEntries } from "../generated/imageManifests";
 
 type PricingDisplayCard = {
   name: string;
@@ -211,24 +212,9 @@ const corporateLogoImages = [
   { src: corporateLogo8, scale: 1.0 },
 ];
 
-const eventPicVerticalModules = import.meta.glob("../assets/Event pics /vertical/*.{png,jpg,jpeg,webp,avif,gif,svg}", {
-  eager: true,
-  import: "default",
-}) as Record<string, string>;
+const allEventPics = allEventPicsSorted;
 
-const eventPicHorizontalModules = import.meta.glob("../assets/Event pics /horizontal/*.{png,jpg,jpeg,webp,avif,gif,svg}", {
-  eager: true,
-  import: "default",
-}) as Record<string, string>;
-
-const allEventPics = [...Object.values(eventPicVerticalModules), ...Object.values(eventPicHorizontalModules)].sort();
-
-const serviceGalleryModules = import.meta.glob("../assets/srevice assets/*/Assets/*.{png,jpg,jpeg,webp,avif,gif,svg}", {
-  eager: true,
-  import: "default",
-}) as Record<string, string>;
-
-const galleryImagesByFolder = Object.entries(serviceGalleryModules).reduce<Record<string, string[]>>((acc, [filePath, imageUrl]) => {
+const galleryImagesByFolder = serviceAssetEntries.reduce<Record<string, string[]>>((acc, { key: filePath, url: imageUrl }) => {
   const folderMatch = filePath.match(/assets\/srevice assets\/([^/]+)\/Assets\//);
   if (!folderMatch) return acc;
 

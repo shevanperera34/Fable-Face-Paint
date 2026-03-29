@@ -9,8 +9,9 @@ import PageFrame, {
   unifiedHoverTransition,
   useIsCompactLayout,
 } from "../components/PageFrame";
-import mossBackground from "../assets/Website Photos etc./moss-5619857_1920.jpg";
+import mossBackground from "../assets/Website Photos etc_/moss-5619857_1920.jpg";
 import ScatterHoverGallery from "../components/ScatterHoverGallery";
+import { serviceAssetModuleRecord } from "../generated/imageManifests";
 
 type ServiceSection = {
   heading: string;
@@ -33,12 +34,7 @@ type ServiceEntry = {
   faq: ServiceFaqItem[];
 };
 
-const serviceImageModules = import.meta.glob("../assets/srevice assets/*/Assets/*.{png,jpg,jpeg,webp,avif,gif,svg}", {
-  eager: true,
-  import: "default",
-}) as Record<string, string>;
-
-const imagesByFolder = Object.entries(serviceImageModules).reduce<Record<string, string[]>>((acc, [filePath, imageUrl]) => {
+const imagesByFolder = Object.entries(serviceAssetModuleRecord).reduce<Record<string, string[]>>((acc, [filePath, imageUrl]) => {
   const folderMatch = filePath.match(/assets\/srevice assets\/([^/]+)\/Assets\//);
   if (!folderMatch) return acc;
 

@@ -21,8 +21,8 @@ import galleryImage5 from "./assets/Gallery/image-asset 5.webp";
 import galleryImage6 from "./assets/Gallery/image-asset 6.webp";
 import galleryImage7 from "./assets/Gallery/image-asset 7.webp";
 import galleryImage8 from "./assets/Gallery/image-asset 8.webp";
-import heroFrameIllustration from "./assets/Website Photos etc./fablefacepaint website illustration.png";
-import milenaImg from "./assets/Website Photos etc./IMG_0316 (3).jpg";
+import heroFrameIllustration from "./assets/Website Photos etc_/fablefacepaint website illustration.png";
+import milenaImg from "./assets/Website Photos etc_/IMG_0316 (3).jpg";
 import heroCenterLogo from "./assets/My Logos and PFPs/Logo - fable face paint (1).png";
 import awardWinner2026 from "./assets/Awards/Winner-2026.png";
 import award1 from "./assets/Awards/1.png";
@@ -39,6 +39,7 @@ import corporateLogo5 from "./assets/Corporate Logos/images-removebg-preview.png
 import corporateLogo6 from "./assets/Corporate Logos/images__1_-removebg-preview.png";
 import corporateLogo7 from "./assets/Corporate Logos/Seneca-logo.svg.png";
 import corporateLogo8 from "./assets/Corporate Logos/Untitled design (12).png";
+import { eventPicVerticalUrls, serviceAssetEntries } from "./generated/imageManifests";
 
 const homeGalleryImages = [galleryImage1, galleryImage2, galleryImage3, galleryImage4, galleryImage5, galleryImage6, galleryImage7, galleryImage8];
 const beltAwardImages = [award1, award2, award3, awardWinner2026, award4, award5, award6];
@@ -76,20 +77,8 @@ const trustIndicators = [
   },
 ];
 
-const verticalEventImageModules = import.meta.glob("./assets/Event pics /vertical/*.{png,jpg,jpeg,webp,avif,gif,svg}", {
-  eager: true,
-  import: "default",
-}) as Record<string, string>;
-
-const serviceAssetImageModules = import.meta.glob("./assets/srevice assets/*/Assets/*.{png,jpg,jpeg,webp,avif,gif,svg}", {
-  eager: true,
-  import: "default",
-}) as Record<string, string>;
-
-const aboutVerticalEventImages = Object.values(verticalEventImageModules).sort();
-const allServiceAssetImages = Object.entries(serviceAssetImageModules)
-  .sort(([pathA], [pathB]) => pathA.localeCompare(pathB))
-  .map(([, imageUrl]) => imageUrl);
+const aboutVerticalEventImages = eventPicVerticalUrls;
+const allServiceAssetImages = serviceAssetEntries.map((e) => e.url);
 
 function VerticalEventSwipeCarousel({
   images,

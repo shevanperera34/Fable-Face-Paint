@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import "./ScatterHoverGallery.css";
 
 type Rotation = {
   row: number;

@@ -10,40 +10,28 @@ import PageFrame, {
   useIsCompactLayout,
 } from "../components/PageFrame";
 import heroBgPink from "../assets/images/hero-bg-pink.png";
-
-const serviceImageModules = import.meta.glob("../assets/srevice assets/*/Assets/*.{png,jpg,jpeg,webp,avif,gif,svg}", {
-  eager: true,
-  import: "default",
-}) as Record<string, string>;
-
-const eventVerticalModules = import.meta.glob("../assets/Event pics /vertical/*.{png,jpg,jpeg,webp,avif,gif,svg}", {
-  eager: true,
-  import: "default",
-}) as Record<string, string>;
-
-const eventHorizontalModules = import.meta.glob("../assets/Event pics /horizontal/*.{png,jpg,jpeg,webp,avif,gif,svg}", {
-  eager: true,
-  import: "default",
-}) as Record<string, string>;
+import {
+  eventPicHorizontalUrls,
+  eventPicVerticalUrls,
+  serviceAssetEntries,
+} from "../generated/imageManifests";
 
 type GalleryItem = {
   src: string;
   tag: string;
 };
 
-const serviceItems: GalleryItem[] = Object.entries(serviceImageModules)
-  .sort(([pathA], [pathB]) => pathA.localeCompare(pathB))
-  .map(([filePath, imageUrl]) => {
-    const folderMatch = filePath.match(/assets\/srevice assets\/([^/]+)\/Assets\//);
-    const folder = folderMatch?.[1] ?? "Service";
-    return {
-      src: imageUrl,
-      tag: folder,
-    };
-  });
+const serviceItems: GalleryItem[] = serviceAssetEntries.map(({ key: filePath, url: imageUrl }) => {
+  const folderMatch = filePath.match(/assets\/srevice assets\/([^/]+)\/Assets\//);
+  const folder = folderMatch?.[1] ?? "Service";
+  return {
+    src: imageUrl,
+    tag: folder,
+  };
+});
 
-const verticalItems: GalleryItem[] = Object.values(eventVerticalModules).map((src) => ({ src, tag: "Event Photos" }));
-const horizontalItems: GalleryItem[] = Object.values(eventHorizontalModules).map((src) => ({ src, tag: "Event Photos" }));
+const verticalItems: GalleryItem[] = eventPicVerticalUrls.map((src) => ({ src, tag: "Event Photos" }));
+const horizontalItems: GalleryItem[] = eventPicHorizontalUrls.map((src) => ({ src, tag: "Event Photos" }));
 
 const allGalleryItems = [...serviceItems, ...verticalItems, ...horizontalItems];
 const galleryTags = ["All", ...Array.from(new Set(allGalleryItems.map((item) => item.tag)))];

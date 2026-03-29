@@ -18,7 +18,8 @@ import PageFrame, {
 } from "../components/PageFrame";
 import heroBg2 from "../assets/images/hero-bg2.png";
 import heroBgPink from "../assets/images/hero-bg-pink.png";
-import smallEventsHeroBackground from "../assets/Event pics /horizontal/jpeg-optimizer_Business+Suite_creation_545982634821784.webp";
+import smallEventsHeroBackground from "../assets/Event pics_/horizontal/jpeg-optimizer_Business+Suite_creation_545982634821784.webp";
+import { eventPicHorizontalUrls, serviceAssetEntries } from "../generated/imageManifests";
 
 type PricingDisplayCard = {
   name: string;
@@ -180,19 +181,9 @@ const birthdayGoogleReviews = [
   },
 ];
 
-const horizontalEventImageModules = import.meta.glob("../assets/Event pics /horizontal/*.{png,jpg,jpeg,webp,avif,gif,svg}", {
-  eager: true,
-  import: "default",
-}) as Record<string, string>;
+const horizontalEventImages = eventPicHorizontalUrls;
 
-const horizontalEventImages = Object.values(horizontalEventImageModules).sort();
-
-const serviceGalleryModules = import.meta.glob("../assets/srevice assets/*/Assets/*.{png,jpg,jpeg,webp,avif,gif,svg}", {
-  eager: true,
-  import: "default",
-}) as Record<string, string>;
-
-const galleryImagesByFolder = Object.entries(serviceGalleryModules).reduce<Record<string, string[]>>((acc, [filePath, imageUrl]) => {
+const galleryImagesByFolder = serviceAssetEntries.reduce<Record<string, string[]>>((acc, { key: filePath, url: imageUrl }) => {
   const folderMatch = filePath.match(/assets\/srevice assets\/([^/]+)\/Assets\//);
   if (!folderMatch) return acc;
 
