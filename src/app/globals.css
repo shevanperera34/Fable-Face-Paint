@@ -1,5 +1,5 @@
 @import "tailwindcss";
-@import "./components/ScatterHoverGallery.css";
+@import "../components/ScatterHoverGallery.css";
 
 @font-face {
   font-family: "Alter Bridge";

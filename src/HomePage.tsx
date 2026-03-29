@@ -1,5 +1,7 @@
+"use client";
+
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useRouter } from "next/navigation";
 import PageFrame, {
   HoverButton,
   Card,
@@ -40,7 +42,7 @@ import corporateLogo6 from "./assets/Corporate Logos/images__1_-removebg-preview
 import corporateLogo7 from "./assets/Corporate Logos/Seneca-logo.svg.png";
 import corporateLogo8 from "./assets/Corporate Logos/Untitled design (12).png";
 import { eventPicVerticalUrls, serviceAssetEntries } from "./generated/imageManifests";
-import { encodePublicAssetPath } from "./utils/encodePublicAssetPath";
+import { encodePublicAssetPath, type BundledImageSrc } from "./utils/encodePublicAssetPath";
 
 const homeGalleryImages = [galleryImage1, galleryImage2, galleryImage3, galleryImage4, galleryImage5, galleryImage6, galleryImage7, galleryImage8];
 const beltAwardImages = [award1, award2, award3, awardWinner2026, award4, award5, award6];
@@ -85,7 +87,7 @@ function VerticalEventSwipeCarousel({
   images,
   isCompactLayout,
 }: {
-  images: string[];
+  images: BundledImageSrc[];
   isCompactLayout: boolean;
 }) {
   const touchStartXRef = useRef<number | null>(null);
@@ -211,7 +213,7 @@ function HomeGalleryRotationViewport({
   images,
   isCompactLayout,
 }: {
-  images: string[];
+  images: BundledImageSrc[];
   isCompactLayout: boolean;
 }) {
   const touchStartXRef = useRef<number | null>(null);
@@ -265,7 +267,7 @@ function HomeGalleryRotationViewport({
   const pickImage = (index: number) => visibleImages[index % visibleImages.length]!;
   const tileRadius = isCompactLayout ? 16 : 22;
 
-  const renderTile = (src: string, key: string) => (
+  const renderTile = (src: BundledImageSrc, key: string) => (
     <div
       key={key}
       style={{
@@ -473,14 +475,14 @@ const homeCopy = {
 };
 
 const HomePage: React.FC = () => {
-  const navigate = useNavigate();
+  const router = useRouter();
   const isCompactLayout = useIsCompactLayout();
 
   const goTo = useCallback(
     (slug: "birthdays" | "corporate" | "contact") => {
-      navigate(canonicalPathBySlug[slug]);
+      router.push(canonicalPathBySlug[slug]);
     },
-    [navigate]
+    [router]
   );
 
   return (

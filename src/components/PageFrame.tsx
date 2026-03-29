@@ -1,5 +1,7 @@
+"use client";
+
 import React, { useCallback, useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useRouter } from "next/navigation";
 import grenzeBold from "../assets/fonts/Grenze/Grenze-Bold.ttf";
 import grenzeSemiBold from "../assets/fonts/Grenze/Grenze-SemiBold.ttf";
 import unifrakturCookBold from "../assets/fonts/UnifrakturCook-Bold.ttf";
@@ -8,6 +10,11 @@ import heroBg2 from "../assets/images/hero-bg2.png";
 import heroBgPink from "../assets/images/hero-bg-pink.png";
 import logoMain from "../assets/My Logos and PFPs/Logo - fable face paint (1).png";
 import IkigaiFooter from "./IkigaiFooter";
+import type { BundledImageSrc } from "../utils/encodePublicAssetPath";
+
+function bundledSrc(src: BundledImageSrc): string {
+  return typeof src === "string" ? src : src.src;
+}
 
 export type PageSlug =
   | "home"
@@ -94,7 +101,7 @@ const defaultSiteBackground: Required<Pick<PageBackground, "color" | "size" | "p
   overlay: string;
 } = {
   color: brand.colors.forest,
-  image: heroBgMain,
+  image: bundledSrc(heroBgMain),
   overlay: `radial-gradient(1100px 650px at 30% 0%, rgba(211,74,168,0.18), transparent 62%),
              radial-gradient(900px 520px at 90% 12%, rgba(237,230,247,0.12), transparent 60%)`,
   size: "cover",
@@ -104,9 +111,9 @@ const defaultSiteBackground: Required<Pick<PageBackground, "color" | "size" | "p
 };
 
 const pageBackgroundAssets = {
-  siteAmbient: heroBgMain,
-  homeHeroBg2: heroBg2,
-  smallEventsHeroBgPink: heroBgPink,
+  siteAmbient: bundledSrc(heroBgMain),
+  homeHeroBg2: bundledSrc(heroBg2),
+  smallEventsHeroBgPink: bundledSrc(heroBgPink),
 } as const;
 
 const navItems: Array<{ slug: PageSlug; label: string }> = [
@@ -120,14 +127,14 @@ const navItems: Array<{ slug: PageSlug; label: string }> = [
 ];
 
 const defaultPageTitleBySlug: Record<PageSlug, string> = {
-  home: "Fable Face Paint | Mobile Face Painting & Event Art (GTA)",
+  home: "Fable Face Paint",
   birthdays: "Small Events | Fable Face Paint",
   corporate: "Large Events | Fable Face Paint",
   services: "Services | Fable Face Paint",
   gallery: "Gallery | Fable Face Paint",
-  about: "About | Fable Face Paint",
+  about: "About Us | Fable Face Paint",
   faq: "FAQ | Fable Face Paint",
-  contact: "Book / Contact | Fable Face Paint",
+  contact: "Book an Artist Now | Fable Face Paint",
 };
 
 export const canonicalPathBySlug: Record<PageSlug, string> = {
@@ -559,16 +566,16 @@ type PageFrameProps = {
 };
 
 export default function PageFrame({ pageSlug, children, backgroundOverride, pageTitle }: PageFrameProps) {
-  const navigate = useNavigate();
+  const router = useRouter();
 
   const setCurrent = useCallback(
     (next: PageSlug) => {
       const target = canonicalPathBySlug[next] ?? "/";
       if (next !== pageSlug) {
-        navigate(target);
+        router.push(target);
       }
     },
-    [navigate, pageSlug]
+    [router, pageSlug]
   );
 
   const [navCondensed, setNavCondensed] = useState(false);
@@ -581,21 +588,21 @@ export default function PageFrame({ pageSlug, children, backgroundOverride, page
     styleEl.textContent = `
       @font-face {
         font-family: "Grenze";
-        src: url("${grenzeBold}") format("truetype");
+        src: url("${bundledSrc(grenzeBold)}") format("truetype");
         font-weight: 700;
         font-style: normal;
       }
 
       @font-face {
         font-family: "Grenze SemiBold";
-        src: url("${grenzeSemiBold}") format("truetype");
+        src: url("${bundledSrc(grenzeSemiBold)}") format("truetype");
         font-weight: 600;
         font-style: normal;
       }
 
       @font-face {
         font-family: "Unifraktur Cook";
-        src: url("${unifrakturCookBold}") format("truetype");
+        src: url("${bundledSrc(unifrakturCookBold)}") format("truetype");
         font-weight: 700;
         font-style: normal;
       }
@@ -708,7 +715,7 @@ export default function PageFrame({ pageSlug, children, backgroundOverride, page
               ariaLabel="Go to home"
             >
               <img
-                src={logoMain}
+                src={bundledSrc(logoMain)}
                 alt=""
                 style={{
                   height: 50,

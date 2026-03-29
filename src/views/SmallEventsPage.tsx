@@ -1,5 +1,7 @@
+"use client";
+
 import React, { useCallback, useMemo, useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useRouter } from "next/navigation";
 import PageFrame, {
   HoverButton,
   HoneyBookEmbed,
@@ -20,6 +22,7 @@ import heroBg2 from "../assets/images/hero-bg2.png";
 import heroBgPink from "../assets/images/hero-bg-pink.png";
 import smallEventsHeroBackground from "../assets/Event pics_/horizontal/jpeg-optimizer_Business+Suite_creation_545982634821784.webp";
 import { eventPicHorizontalUrls, serviceAssetEntries } from "../generated/imageManifests";
+import { encodePublicAssetPath, type BundledImageSrc } from "../utils/encodePublicAssetPath";
 
 type PricingDisplayCard = {
   name: string;
@@ -183,17 +186,18 @@ const birthdayGoogleReviews = [
 
 const horizontalEventImages = eventPicHorizontalUrls;
 
-const galleryImagesByFolder = serviceAssetEntries.reduce<Record<string, string[]>>((acc, { key: filePath, url: imageUrl }) => {
-  const folderMatch = filePath.match(/assets\/srevice assets\/([^/]+)\/Assets\//);
-  if (!folderMatch) return acc;
+const galleryImagesByFolder = serviceAssetEntries.reduce<Record<string, BundledImageSrc[]>>(
+  (acc, { key: filePath, url: imageUrl }) => {
+    const folderMatch = filePath.match(/assets\/srevice assets\/([^/]+)\/Assets\//);
+    if (!folderMatch) return acc;
 
-  const folderName = folderMatch[1];
-  if (!acc[folderName]) acc[folderName] = [];
-  acc[folderName].push(imageUrl);
-  return acc;
-}, {});
-
-Object.values(galleryImagesByFolder).forEach((images) => images.sort());
+    const folderName = folderMatch[1];
+    if (!acc[folderName]) acc[folderName] = [];
+    acc[folderName].push(imageUrl);
+    return acc;
+  },
+  {}
+);
 
 function RotatingGoogleReviewCard({
   reviews,
@@ -295,7 +299,7 @@ function EventHighlightsGallery({
   images,
   isCompactLayout,
 }: {
-  images: string[];
+  images: BundledImageSrc[];
   isCompactLayout: boolean;
 }) {
   const touchStartXRef = useRef<number | null>(null);
@@ -370,7 +374,7 @@ function EventHighlightsGallery({
         aria-label="Event highlights gallery"
       >
         <img
-          src={galleryImages[activeIndex]}
+          src={encodePublicAssetPath(galleryImages[activeIndex]!)}
           alt={`Event highlight ${activeIndex + 1}`}
           style={{
             width: "100%",
@@ -634,7 +638,7 @@ function SmallEventsServiceSpotlight({ isCompactLayout }: { isCompactLayout: boo
           }}
         >
           <img
-            src={activeItem.image}
+            src={encodePublicAssetPath(activeItem.image)}
             alt={`${activeItem.serviceName} preview`}
             style={{
               width: "100%",
@@ -676,10 +680,16 @@ function SmallEventsServiceSpotlight({ isCompactLayout }: { isCompactLayout: boo
 }
 
 const SmallEventsPage: React.FC = () => {
-  const navigate = useNavigate();
+  const router = useRouter();
   const isCompactLayout = useIsCompactLayout();
-  const eventProofPool = horizontalEventImages.length > 0 ? horizontalEventImages : [smallEventsHeroBackground];
-  const moodImages = useMemo(() => Array.from({ length: 8 }, (_, index) => eventProofPool[index % eventProofPool.length]), [eventProofPool]);
+  const eventProofPool = useMemo(
+    () => (horizontalEventImages.length > 0 ? horizontalEventImages : [smallEventsHeroBackground]),
+    []
+  );
+  const moodImages = useMemo(
+    () => Array.from({ length: 8 }, (_, index) => eventProofPool[index % eventProofPool.length]),
+    [eventProofPool]
+  );
 
   return (
     <PageFrame pageSlug="birthdays">
@@ -694,7 +704,7 @@ const SmallEventsPage: React.FC = () => {
               borderRadius: 0,
               overflow: "hidden",
               minHeight: isCompactLayout ? "min(72vh, 560px)" : "min(78vh, 760px)",
-              backgroundImage: `linear-gradient(105deg, rgba(6,10,14,0.78) 0%, rgba(6,10,14,0.58) 44%, rgba(6,10,14,0.74) 100%), url(${smallEventsHeroBackground})`,
+              backgroundImage: `linear-gradient(105deg, rgba(6,10,14,0.78) 0%, rgba(6,10,14,0.58) 44%, rgba(6,10,14,0.74) 100%), url("${encodePublicAssetPath(smallEventsHeroBackground)}")`,
               backgroundSize: "cover",
               backgroundPosition: "center",
               display: "grid",
@@ -738,7 +748,11 @@ const SmallEventsPage: React.FC = () => {
             </div>
           </div>
 
-          <SmallEventsSection backgroundImage={heroBg2} padding={isCompactLayout ? "24px 18px" : "34px 18px"} disableWhiteOverlay>
+          <SmallEventsSection
+            backgroundImage={encodePublicAssetPath(heroBg2)}
+            padding={isCompactLayout ? "24px 18px" : "34px 18px"}
+            disableWhiteOverlay
+          >
             <div style={{ display: "grid", gap: 46 }}>
               <div style={{ display: "grid", gap: 10, justifyItems: "center" }}>
                 <div
@@ -821,7 +835,7 @@ const SmallEventsPage: React.FC = () => {
                         }}
                       >
                         <img
-                          src={cardVisualImage}
+                          src={encodePublicAssetPath(cardVisualImage)}
                           alt={`${card.name} event preview`}
                           style={{
                             width: "100%",
@@ -896,7 +910,7 @@ const SmallEventsPage: React.FC = () => {
                       <div style={{ marginTop: "auto", display: "grid", gap: 18 }}>
                         {card.footnote ? <div style={{ fontSize: 13, lineHeight: 1.45, opacity: 0.62 }}>{card.footnote}</div> : null}
                         <HoverButton
-                          onClick={() => navigate(canonicalPathBySlug.contact)}
+                          onClick={() => router.push(canonicalPathBySlug.contact)}
                           style={{
                             width: "100%",
                             borderRadius: 18,
@@ -930,7 +944,7 @@ const SmallEventsPage: React.FC = () => {
             </div>
           </SmallEventsSection>
 
-          <SmallEventsSection backgroundImage={heroBgPink} padding={isCompactLayout ? "22px 18px" : "30px 18px"}>
+          <SmallEventsSection backgroundImage={encodePublicAssetPath(heroBgPink)} padding={isCompactLayout ? "22px 18px" : "30px 18px"}>
             <div style={{ display: "grid", gap: 20 }}>
               <div style={{ display: "grid", gap: 10, justifyItems: "center" }}>
                 <div
@@ -963,7 +977,7 @@ const SmallEventsPage: React.FC = () => {
             </div>
           </SmallEventsSection>
 
-          <SmallEventsSection backgroundImage={heroBg2} padding={isCompactLayout ? "22px 18px 30px" : "30px 18px 40px"}>
+          <SmallEventsSection backgroundImage={encodePublicAssetPath(heroBg2)} padding={isCompactLayout ? "22px 18px 30px" : "30px 18px 40px"}>
             <div style={{ display: "grid", gap: 20 }}>
               <div
                 style={{

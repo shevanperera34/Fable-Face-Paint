@@ -1,6 +1,9 @@
+"use client";
+
 import React, { useState } from "react";
 import PageFrame, { contentMaxWidth, titleFont, uiFont, useIsCompactLayout } from "../components/PageFrame";
 import heroBg2 from "../assets/images/hero-bg2.png";
+import { encodePublicAssetPath } from "../utils/encodePublicAssetPath";
 
 type FaqItem = {
   question: string;
@@ -257,7 +260,7 @@ const FaqPage: React.FC = () => {
             width: "100vw",
             marginLeft: "calc(50% - 50vw)",
             marginRight: "calc(50% - 50vw)",
-            backgroundImage: `linear-gradient(108deg, rgba(8,12,18,0.86) 0%, rgba(8,12,18,0.64) 48%, rgba(8,12,18,0.82) 100%), url(${heroBg2})`,
+            backgroundImage: `linear-gradient(108deg, rgba(8,12,18,0.86) 0%, rgba(8,12,18,0.64) 48%, rgba(8,12,18,0.82) 100%), url("${encodePublicAssetPath(heroBg2)}")`,
             backgroundSize: "cover",
             backgroundPosition: "center",
             borderBottom: "1px solid rgba(255,255,255,0.14)",

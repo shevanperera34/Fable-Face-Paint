@@ -1,5 +1,7 @@
+"use client";
+
 import React, { useEffect, useMemo, useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import PageFrame, {
   HoverButton,
   contentMaxWidth,
@@ -15,10 +17,10 @@ import {
   eventPicVerticalUrls,
   serviceAssetEntries,
 } from "../generated/imageManifests";
-import { encodePublicAssetPath } from "../utils/encodePublicAssetPath";
+import { encodePublicAssetPath, type BundledImageSrc } from "../utils/encodePublicAssetPath";
 
 type GalleryItem = {
-  src: string;
+  src: BundledImageSrc;
   tag: string;
 };
 
@@ -40,11 +42,13 @@ const instagramProfileUrl = "https://www.instagram.com/fablefacepaint/?hl=en";
 
 const GalleryPage: React.FC = () => {
   const isCompactLayout = useIsCompactLayout();
-  const [searchParams, setSearchParams] = useSearchParams();
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
   const [activeTag, setActiveTag] = useState<string>("All");
 
   useEffect(() => {
-    const requestedTag = searchParams.get("tag")?.trim() ?? "All";
+    const requestedTag = searchParams?.get("tag")?.trim() ?? "All";
     setActiveTag(galleryTags.includes(requestedTag) ? requestedTag : "All");
   }, [searchParams]);
 
@@ -169,7 +173,12 @@ const GalleryPage: React.FC = () => {
                   key={tag}
                   onClick={() => {
                     setActiveTag(tag);
-                    setSearchParams(tag === "All" ? {} : { tag });
+                    const path = pathname ?? "/gallery";
+                    if (tag === "All") {
+                      router.replace(path);
+                    } else {
+                      router.replace(`${path}?${new URLSearchParams({ tag }).toString()}`);
+                    }
                   }}
                   style={{
                     cursor: "pointer",

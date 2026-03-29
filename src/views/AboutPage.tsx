@@ -1,5 +1,7 @@
+"use client";
+
 import React from "react";
-import { useNavigate } from "react-router-dom";
+import { useRouter } from "next/navigation";
 import PageFrame, {
   HoverButton,
   canonicalPathBySlug,
@@ -13,6 +15,7 @@ import PageFrame, {
 import heroBg2 from "../assets/images/hero-bg2.png";
 import milenaImg from "../assets/Website Photos etc_/IMG_0316 (3).jpg";
 import { eventPicHorizontalUrls } from "../generated/imageManifests";
+import { encodePublicAssetPath } from "../utils/encodePublicAssetPath";
 
 const aboutGalleryImages = eventPicHorizontalUrls;
 
@@ -62,18 +65,18 @@ const aboutGoogleReviews = [
 ];
 
 const AboutPage: React.FC = () => {
-  const navigate = useNavigate();
+  const router = useRouter();
   const isCompactLayout = useIsCompactLayout();
 
   return (
-    <PageFrame pageSlug="about" pageTitle="About | Fable Face Paint">
+    <PageFrame pageSlug="about" pageTitle="About Us | Fable Face Paint">
       <div style={{ maxWidth: contentMaxWidth, margin: "0 auto", padding: "0 18px 34px" }}>
         <section
           style={{
             width: "100vw",
             marginLeft: "calc(50% - 50vw)",
             marginRight: "calc(50% - 50vw)",
-            backgroundImage: `linear-gradient(105deg, rgba(6,10,14,0.82) 0%, rgba(6,10,14,0.60) 44%, rgba(6,10,14,0.78) 100%), url(${heroBg2})`,
+            backgroundImage: `linear-gradient(105deg, rgba(6,10,14,0.82) 0%, rgba(6,10,14,0.60) 44%, rgba(6,10,14,0.78) 100%), url("${encodePublicAssetPath(heroBg2)}")`,
             backgroundSize: "cover",
             backgroundPosition: "center",
           }}
@@ -90,7 +93,7 @@ const AboutPage: React.FC = () => {
             }}
           >
             <div style={{ display: "grid", gap: 16 }}>
-              <div style={{ fontSize: 12, letterSpacing: "0.12em", textTransform: "uppercase", opacity: 0.74, fontFamily: uiFont }}>About</div>
+              <div style={{ fontSize: 12, letterSpacing: "0.12em", textTransform: "uppercase", opacity: 0.74, fontFamily: uiFont }}>About us</div>
               <h1
                 style={{
                   margin: 0,
@@ -100,15 +103,14 @@ const AboutPage: React.FC = () => {
                   fontFamily: titleFont,
                 }}
               >
-                Creative event artistry with polished execution.
+                Meet the artist behind Fable Face Paint.
               </h1>
               <p style={{ margin: 0, maxWidth: 760, fontSize: "clamp(1rem, 1.24vw, 1.17rem)", lineHeight: 1.62, color: "rgba(242,247,252,0.92)" }}>
-                Fable Face Paint blends magical design with reliable event logistics. Whether your event is intimate or high-volume, the goal is always the same:
-                create memorable guest moments without adding stress to your day.
+                Professional face painting, glitter tattoos, and event art across Toronto & the GTA—blending magical design with reliable logistics. From intimate parties to high-volume events, the goal is memorable guest moments without stress on your day.
               </p>
               <div style={{ paddingTop: 2 }}>
                 <HoverButton
-                  onClick={() => navigate(canonicalPathBySlug.contact)}
+                  onClick={() => router.push(canonicalPathBySlug.contact)}
                   style={{
                     cursor: "pointer",
                     border: "1px solid #931C62",
@@ -142,7 +144,11 @@ const AboutPage: React.FC = () => {
                 boxShadow: "0 14px 32px rgba(0,0,0,0.32)",
               }}
             >
-              <img src={milenaImg} alt="Milena from Fable Face Paint" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
+              <img
+                src={encodePublicAssetPath(milenaImg)}
+                alt="Milena from Fable Face Paint"
+                style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+              />
             </div>
           </div>
         </section>
@@ -342,7 +348,11 @@ const AboutPage: React.FC = () => {
                     boxShadow: "0 10px 24px rgba(0,0,0,0.22)",
                   }}
                 >
-                  <img src={image} alt={`Event moment ${index + 1}`} style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
+                  <img
+                    src={encodePublicAssetPath(image)}
+                    alt={`Event moment ${index + 1}`}
+                    style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+                  />
                 </div>
               ))}
             </div>
@@ -352,7 +362,7 @@ const AboutPage: React.FC = () => {
         <section style={{ paddingBottom: 8 }}>
           <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
             <HoverButton
-              onClick={() => navigate(canonicalPathBySlug.services)}
+              onClick={() => router.push(canonicalPathBySlug.services)}
               style={{
                 cursor: "pointer",
                 border: "1px solid rgba(255,255,255,0.18)",
@@ -372,7 +382,7 @@ const AboutPage: React.FC = () => {
               View Services
             </HoverButton>
             <HoverButton
-              onClick={() => navigate(canonicalPathBySlug.contact)}
+              onClick={() => router.push(canonicalPathBySlug.contact)}
               style={{
                 cursor: "pointer",
                 border: "1px solid #931C62",

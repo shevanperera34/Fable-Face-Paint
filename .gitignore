@@ -8,15 +8,10 @@ pnpm-debug.log*
 lerna-debug.log*
 
 node_modules
+.next
 dist
 dist-ssr
 *.local
-
-# Client bundle output (regenerate with pnpm run build)
-public/js
-public/assets
-public/build-manifest.json
-public/sitemap.xml
 
 # Editor directories and files
 .vscode/*

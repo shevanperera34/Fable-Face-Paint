@@ -1,5 +1,7 @@
+"use client";
+
 import React, { useEffect, useMemo, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useRouter } from "next/navigation";
 import PageFrame, {
   HoverButton,
   contentMaxWidth,
@@ -12,6 +14,7 @@ import PageFrame, {
 import mossBackground from "../assets/Website Photos etc_/moss-5619857_1920.jpg";
 import ScatterHoverGallery from "../components/ScatterHoverGallery";
 import { serviceAssetModuleRecord } from "../generated/imageManifests";
+import { encodePublicAssetPath, type BundledImageSrc } from "../utils/encodePublicAssetPath";
 
 type ServiceSection = {
   heading: string;
@@ -34,17 +37,18 @@ type ServiceEntry = {
   faq: ServiceFaqItem[];
 };
 
-const imagesByFolder = Object.entries(serviceAssetModuleRecord).reduce<Record<string, string[]>>((acc, [filePath, imageUrl]) => {
-  const folderMatch = filePath.match(/assets\/srevice assets\/([^/]+)\/Assets\//);
-  if (!folderMatch) return acc;
+const imagesByFolder = Object.entries(serviceAssetModuleRecord).reduce<Record<string, BundledImageSrc[]>>(
+  (acc, [filePath, imageUrl]) => {
+    const folderMatch = filePath.match(/assets\/srevice assets\/([^/]+)\/Assets\//);
+    if (!folderMatch) return acc;
 
-  const folderName = folderMatch[1];
-  if (!acc[folderName]) acc[folderName] = [];
-  acc[folderName].push(imageUrl);
-  return acc;
-}, {});
-
-Object.values(imagesByFolder).forEach((images) => images.sort());
+    const folderName = folderMatch[1];
+    if (!acc[folderName]) acc[folderName] = [];
+    acc[folderName].push(imageUrl);
+    return acc;
+  },
+  {}
+);
 
 const services: ServiceEntry[] = [
   {
@@ -323,7 +327,7 @@ function ServiceGalleryPanel({
   isCompactLayout,
   onOpenGallery,
 }: {
-  images: string[];
+  images: BundledImageSrc[];
   isCompactLayout: boolean;
   onOpenGallery: () => void;
 }) {
@@ -465,7 +469,7 @@ function CollapsiblePanel({
 
 const ServicesPage: React.FC = () => {
   const isCompactLayout = useIsCompactLayout();
-  const navigate = useNavigate();
+  const router = useRouter();
   const [activeServiceId, setActiveServiceId] = useState<string | null>(null);
   const [hoveredServiceId, setHoveredServiceId] = useState<string | null>(null);
 
@@ -487,7 +491,7 @@ const ServicesPage: React.FC = () => {
           width: "100vw",
           marginLeft: "calc(50% - 50vw)",
           marginRight: "calc(50% - 50vw)",
-          backgroundImage: `linear-gradient(180deg, rgba(4,10,14,0.78) 0%, rgba(4,10,14,0.74) 100%), url(${mossBackground})`,
+          backgroundImage: `linear-gradient(180deg, rgba(4,10,14,0.78) 0%, rgba(4,10,14,0.74) 100%), url("${encodePublicAssetPath(mossBackground)}")`,
           backgroundSize: "cover",
           backgroundPosition: "center",
           backgroundAttachment: "fixed",
@@ -512,7 +516,7 @@ const ServicesPage: React.FC = () => {
             >
               {servicesWithImages.map((service) => {
                 const preferredIndex = servicePreviewIndexById[service.id] ?? 0;
-                const previewImage = service.galleryImages[preferredIndex] ?? service.galleryImages[0] ?? "";
+                const previewImage = service.galleryImages[preferredIndex] ?? service.galleryImages[0];
                 const cardHovered = hoveredServiceId === service.id;
                 return (
                   <article
@@ -543,7 +547,7 @@ const ServicesPage: React.FC = () => {
                   >
                     {previewImage ? (
                       <img
-                        src={previewImage}
+                        src={encodePublicAssetPath(previewImage)}
                         alt={service.name}
                         style={{
                           position: "absolute",
@@ -703,7 +707,7 @@ const ServicesPage: React.FC = () => {
                   <ServiceGalleryPanel
                     images={activeService.galleryImages}
                     isCompactLayout={isCompactLayout}
-                    onOpenGallery={() => navigate(`/gallery?tag=${encodeURIComponent(activeService.folder)}`)}
+                    onOpenGallery={() => router.push(`/gallery?tag=${encodeURIComponent(activeService.folder)}`)}
                   />
                 </div>
 

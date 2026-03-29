@@ -1,5 +1,7 @@
+"use client";
+
 import React, { useCallback, useMemo, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useRouter } from "next/navigation";
 import PageFrame, {
   HoverButton,
   HoneyBookEmbed,
@@ -27,7 +29,7 @@ import corporateLogo6 from "../assets/Corporate Logos/images__1_-removebg-previe
 import corporateLogo7 from "../assets/Corporate Logos/Seneca-logo.svg.png";
 import corporateLogo8 from "../assets/Corporate Logos/Untitled design (12).png";
 import { allEventPicsSorted, serviceAssetEntries } from "../generated/imageManifests";
-import { encodePublicAssetPath } from "../utils/encodePublicAssetPath";
+import { encodePublicAssetPath, type BundledImageSrc } from "../utils/encodePublicAssetPath";
 
 type PricingDisplayCard = {
   name: string;
@@ -215,27 +217,28 @@ const corporateLogoImages = [
 
 const allEventPics = allEventPicsSorted;
 
-const galleryImagesByFolder = serviceAssetEntries.reduce<Record<string, string[]>>((acc, { key: filePath, url: imageUrl }) => {
-  const folderMatch = filePath.match(/assets\/srevice assets\/([^/]+)\/Assets\//);
-  if (!folderMatch) return acc;
+const galleryImagesByFolder = serviceAssetEntries.reduce<Record<string, BundledImageSrc[]>>(
+  (acc, { key: filePath, url: imageUrl }) => {
+    const folderMatch = filePath.match(/assets\/srevice assets\/([^/]+)\/Assets\//);
+    if (!folderMatch) return acc;
 
-  const folderName = folderMatch[1];
-  if (!acc[folderName]) acc[folderName] = [];
-  acc[folderName].push(imageUrl);
-  return acc;
-}, {});
-
-Object.values(galleryImagesByFolder).forEach((images) => images.sort());
+    const folderName = folderMatch[1];
+    if (!acc[folderName]) acc[folderName] = [];
+    acc[folderName].push(imageUrl);
+    return acc;
+  },
+  {}
+);
 
 function RotatingCorporateLogoPair({
   logos,
   isCompactLayout,
 }: {
-  logos: { src: string }[];
+  logos: { src: BundledImageSrc }[];
   isCompactLayout: boolean;
 }) {
   const [activeLogoStart, setActiveLogoStart] = useState(0);
-  const safeLogos = logos.length > 0 ? logos : [{ src: "" }];
+  const safeLogos = logos.length > 0 ? logos : [{ src: "" as BundledImageSrc }];
   const total = safeLogos.length;
 
   const goNext = useCallback(() => {
@@ -249,7 +252,9 @@ function RotatingCorporateLogoPair({
     return () => window.clearInterval(interval);
   }, [goNext, total]);
 
-  const visible = [safeLogos[activeLogoStart % total], safeLogos[(activeLogoStart + 1) % total]].filter(Boolean) as { src: string }[];
+  const visible = [safeLogos[activeLogoStart % total], safeLogos[(activeLogoStart + 1) % total]].filter(Boolean) as {
+    src: BundledImageSrc;
+  }[];
 
   return (
     <div
@@ -625,10 +630,16 @@ function LargeEventsServiceSpotlight({ isCompactLayout }: { isCompactLayout: boo
 }
 
 const LargeEventsPage: React.FC = () => {
-  const navigate = useNavigate();
+  const router = useRouter();
   const isCompactLayout = useIsCompactLayout();
-  const eventProofPool = allEventPics.length > 0 ? allEventPics : [largeEventsHeroBackground];
-  const moodImages = useMemo(() => Array.from({ length: 8 }, (_, index) => eventProofPool[index % eventProofPool.length]), [eventProofPool]);
+  const eventProofPool = useMemo(
+    () => (allEventPics.length > 0 ? allEventPics : [largeEventsHeroBackground]),
+    []
+  );
+  const moodImages = useMemo(
+    () => Array.from({ length: 8 }, (_, index) => eventProofPool[index % eventProofPool.length]),
+    [eventProofPool]
+  );
 
   return (
     <PageFrame pageSlug="corporate">
@@ -688,7 +699,11 @@ const LargeEventsPage: React.FC = () => {
             </div>
           </div>
 
-          <SmallEventsSection backgroundImage={heroBgMain} padding={isCompactLayout ? "24px 18px" : "34px 18px"} disableWhiteOverlay>
+          <SmallEventsSection
+            backgroundImage={encodePublicAssetPath(heroBgMain)}
+            padding={isCompactLayout ? "24px 18px" : "34px 18px"}
+            disableWhiteOverlay
+          >
             <div style={{ display: "grid", gap: 32 }}>
               <div style={{ display: "grid", gap: 10, justifyItems: "center" }}>
                 <div
@@ -847,7 +862,7 @@ const LargeEventsPage: React.FC = () => {
                       <div style={{ marginTop: "auto", display: "grid", gap: 18 }}>
                         {card.footnote ? <div style={{ fontSize: 13, lineHeight: 1.45, opacity: 0.62 }}>{card.footnote}</div> : null}
                         <HoverButton
-                          onClick={() => navigate(canonicalPathBySlug.contact)}
+                          onClick={() => router.push(canonicalPathBySlug.contact)}
                           style={{
                             width: "100%",
                             borderRadius: 18,
@@ -881,7 +896,7 @@ const LargeEventsPage: React.FC = () => {
             </div>
           </SmallEventsSection>
 
-          <SmallEventsSection backgroundImage={heroBgWhite} padding={isCompactLayout ? "22px 18px 30px" : "30px 18px 40px"}>
+          <SmallEventsSection backgroundImage={encodePublicAssetPath(heroBgWhite)} padding={isCompactLayout ? "22px 18px 30px" : "30px 18px 40px"}>
             <div style={{ display: "grid", gap: 30 }}>
               <div style={{ display: "grid", gap: 18 }}>
                 <div style={{ display: "grid", gap: 10, justifyItems: "center" }}>

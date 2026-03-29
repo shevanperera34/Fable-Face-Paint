@@ -1,11 +1,29 @@
+import { FlatCompat } from "@eslint/eslintrc";
 import js from "@eslint/js";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 import globals from "globals";
 import reactHooks from "eslint-plugin-react-hooks";
 import tseslint from "typescript-eslint";
 import { defineConfig, globalIgnores } from "eslint/config";
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const compat = new FlatCompat({ baseDirectory: __dirname });
+
 export default defineConfig([
-  globalIgnores(["dist", "public/js", "public/assets", "public/build-manifest.json", "public/sitemap.xml", "src/generated"]),
+  ...compat.extends("next/core-web-vitals"),
+  globalIgnores([
+    ".next",
+    "next-env.d.ts",
+    "dist",
+    "public/js",
+    "public/assets",
+    "public/build-manifest.json",
+    "public/sitemap.xml",
+    "src/generated",
+    "trash",
+  ]),
   {
     files: ["**/*.{ts,tsx}"],
     extends: [js.configs.recommended, tseslint.configs.recommended, reactHooks.configs.flat.recommended],
@@ -15,10 +33,12 @@ export default defineConfig([
     },
     rules: {
       "react-hooks/set-state-in-effect": "off",
+      "@next/next/no-img-element": "off",
+      "@next/next/no-page-custom-font": "off",
     },
   },
   {
-    files: ["server/**/*.{ts,tsx}", "api/**/*.ts", "scripts/**/*.{js,mjs}"],
+    files: ["scripts/**/*.{js,mjs}"],
     languageOptions: {
       globals: { ...globals.browser, ...globals.node },
     },

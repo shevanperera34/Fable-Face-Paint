@@ -1,5 +1,9 @@
-import LiquidEther from "./LiquidEther";
+"use client";
+
+import dynamic from "next/dynamic";
 import footerLogo from "../assets/My Logos and PFPs/Logo - fable face paint (1).png";
+
+const LiquidEther = dynamic(() => import("./LiquidEther"), { ssr: false });
 
 type FooterPage = "home" | "services" | "gallery" | "about" | "contact";
 
@@ -64,7 +68,11 @@ export default function IkigaiFooter({ onNavigate, brandName }: IkigaiFooterProp
         <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
           <div>
             <div className="flex items-center gap-3">
-              <img src={footerLogo} alt={`${brandName} logo`} className="h-12 w-auto shrink-0 object-contain opacity-95" />
+              <img
+              src={typeof footerLogo === "string" ? footerLogo : footerLogo.src}
+              alt={`${brandName} logo`}
+              className="h-12 w-auto shrink-0 object-contain opacity-95"
+            />
 
               <div>
                 <div className="font-['Germania_One'] uppercase tracking-widest text-lg">{brandName}</div>

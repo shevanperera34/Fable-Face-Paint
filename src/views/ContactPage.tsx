@@ -1,5 +1,7 @@
+"use client";
+
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useRouter } from "next/navigation";
 import PageFrame, {
   HoverButton,
   HoneyBookEmbed,
@@ -12,21 +14,22 @@ import PageFrame, {
   useIsCompactLayout,
 } from "../components/PageFrame";
 import heroBg2 from "../assets/images/hero-bg2.png";
+import { encodePublicAssetPath } from "../utils/encodePublicAssetPath";
 
 const ContactPage: React.FC = () => {
-  const navigate = useNavigate();
+  const router = useRouter();
   const isCompactLayout = useIsCompactLayout();
   const [showUnsureForm, setShowUnsureForm] = useState(false);
 
   return (
-    <PageFrame pageSlug="contact" pageTitle="Book / Contact | Fable Face Paint">
+    <PageFrame pageSlug="contact" pageTitle="Book an Artist Now | Fable Face Paint">
       <div style={{ maxWidth: contentMaxWidth, margin: "0 auto", padding: "0 18px 34px" }}>
         <section
           style={{
             width: "100vw",
             marginLeft: "calc(50% - 50vw)",
             marginRight: "calc(50% - 50vw)",
-            backgroundImage: `linear-gradient(108deg, rgba(8,12,18,0.84) 0%, rgba(8,12,18,0.62) 48%, rgba(8,12,18,0.80) 100%), url(${heroBg2})`,
+            backgroundImage: `linear-gradient(108deg, rgba(8,12,18,0.84) 0%, rgba(8,12,18,0.62) 48%, rgba(8,12,18,0.80) 100%), url("${encodePublicAssetPath(heroBg2)}")`,
             backgroundSize: "cover",
             backgroundPosition: "center",
           }}
@@ -40,7 +43,7 @@ const ContactPage: React.FC = () => {
               gap: 14,
             }}
           >
-            <div style={{ fontSize: 12, letterSpacing: "0.12em", textTransform: "uppercase", opacity: 0.74, fontFamily: uiFont }}>Book / Contact</div>
+            <div style={{ fontSize: 12, letterSpacing: "0.12em", textTransform: "uppercase", opacity: 0.74, fontFamily: uiFont }}>Book an artist now</div>
             <h1
               style={{
                 margin: 0,
@@ -51,10 +54,10 @@ const ContactPage: React.FC = () => {
                 maxWidth: 860,
               }}
             >
-              Choose the right inquiry path for your event.
+              Looking to book face painters in Toronto?
             </h1>
             <p style={{ margin: 0, maxWidth: 820, fontSize: "clamp(0.98rem, 1.18vw, 1.1rem)", lineHeight: 1.62, color: "rgba(242,247,252,0.92)" }}>
-              Keep this page’s copy, labels, and funnel structure editable here so booking changes are quick.
+              Request a date for Fable Face Paint—small parties, corporate events, and large activations across the GTA. Pick the path that fits your event; you’ll get a clear funnel and fast replies.
             </p>
           </div>
         </section>
@@ -84,7 +87,7 @@ const ContactPage: React.FC = () => {
               <div style={{ fontSize: "clamp(1.8rem, 2.8vw, 2.8rem)", lineHeight: 1.02, fontWeight: 950, fontFamily: titleFont }}>Birthday / Private Party</div>
               <p style={{ margin: 0, fontSize: 15, lineHeight: 1.6, opacity: 0.9 }}>For birthdays and intimate celebrations where premium design quality is the priority.</p>
               <HoverButton
-                onClick={() => navigate(canonicalPathBySlug.birthdays)}
+                onClick={() => router.push(canonicalPathBySlug.birthdays)}
                 style={{
                   cursor: "pointer",
                   border: "1px solid rgba(255,255,255,0.18)",
@@ -133,7 +136,7 @@ const ContactPage: React.FC = () => {
                 }}
                 hoverStyle={unifiedDarkButtonHover}
               >
-                I'm Not Sure
+                {"I'm Not Sure"}
               </HoverButton>
             </div>
 
@@ -153,7 +156,7 @@ const ContactPage: React.FC = () => {
               <div style={{ fontSize: "clamp(1.8rem, 2.8vw, 2.8rem)", lineHeight: 1.02, fontWeight: 950, fontFamily: titleFont }}>Corporate / Public Events</div>
               <p style={{ margin: 0, fontSize: 15, lineHeight: 1.6, opacity: 0.9 }}>For activations, festivals, and higher guest volume where throughput and structure are critical.</p>
               <HoverButton
-                onClick={() => navigate(canonicalPathBySlug.corporate)}
+                onClick={() => router.push(canonicalPathBySlug.corporate)}
                 style={{
                   cursor: "pointer",
                   border: "1px solid rgba(255,255,255,0.18)",

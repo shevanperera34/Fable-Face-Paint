@@ -1,4 +1,4 @@
-import { getSiteUrl, withBasePath } from "../config/site";
+import { getSiteUrl, withBasePath } from "@/config/site";
 
 export type SeoRouteId =
   | "home"
@@ -18,14 +18,26 @@ export type RouteSeo = {
   path: string;
 };
 
+/** Short sitelink-style names Google often surfaces for internal links */
+export const sitelinkLabelByRoute: Record<SeoRouteId, string> = {
+  home: "Fable Face Paint",
+  "small-events": "Small Events",
+  "large-events": "Large Events",
+  services: "Services",
+  gallery: "Gallery",
+  about: "About Us",
+  faq: "FAQ",
+  contact: "Book an Artist Now",
+};
+
 const routes: Record<SeoRouteId, Omit<RouteSeo, "routeId">> = {
   home: {
     path: "/",
-    title: "Fable Face Paint | GTA Face Painting for Birthdays, Corporate & Events",
+    title: "Fable Face Paint",
     description:
-      "Fable Face Paint offers professional mobile face painting in the Greater Toronto Area: birthdays, corporate activations, festivals, and private events. Book insured artists for high-quality face painting and event art.",
+      "Award-winning, professional face painting and event entertainment across Toronto & the GTA. Face, body & belly painting, matte & glitter tattoos, bling bar, balloon twisting—mobile booking for parties, corporate events, and festivals.",
     keywords:
-      "Fable Face Paint, face painting Toronto, GTA face painting, mobile face painter, birthday face painting, corporate face painting, event face painting, professional face painter Ontario",
+      "Fable Face Paint, face painting Toronto, GTA face painting, event entertainment Toronto, award winning face painter, mobile face painter, corporate face painting, birthday party face painting",
   },
   "small-events": {
     path: "/small-events",
@@ -61,11 +73,11 @@ const routes: Record<SeoRouteId, Omit<RouteSeo, "routeId">> = {
   },
   about: {
     path: "/about",
-    title: "About Fable Face Paint | Professional GTA Face Painter",
+    title: "About Us | Fable Face Paint",
     description:
-      "Learn about Fable Face Paint: professional standards, insured mobile service, and artistry focused on guest experience at Toronto and GTA events.",
+      "Meet the artist behind Fable Face Paint. Professional face painting, glitter tattoos, and event art across Toronto & the GTA—insured, mobile, and built for birthdays, corporate activations, and public events.",
     keywords:
-      "about Fable Face Paint, professional face painter Toronto, insured face painting GTA, mobile artist",
+      "about Fable Face Paint, face painter Toronto, Milena face paint, GTA event artist, professional face painting about",
   },
   faq: {
     path: "/faq",
@@ -77,11 +89,11 @@ const routes: Record<SeoRouteId, Omit<RouteSeo, "routeId">> = {
   },
   contact: {
     path: "/contact",
-    title: "Book Face Painting | Contact Fable Face Paint (GTA)",
+    title: "Book an Artist Now | Fable Face Paint",
     description:
-      "Contact Fable Face Paint to book mobile face painting for your Toronto or GTA event. Fast replies for dates, packages, and custom event needs.",
+      "Looking to book the best face painters in Toronto? Request a date for Fable Face Paint—small parties, corporate events, and large activations across the GTA. Quick replies and clear packages.",
     keywords:
-      "book face painting Toronto, contact face painter GTA, Fable Face Paint booking",
+      "book face painter Toronto, hire face painting GTA, Fable Face Paint booking, corporate face paint quote",
   },
 };
 
@@ -125,8 +137,54 @@ export function absoluteUrl(path: string): string {
   return `${origin}${rel}`;
 }
 
+function pageUrl(origin: string, path: string): string {
+  const p = path === "/" ? "" : path;
+  return `${origin.replace(/\/$/, "")}${p}`;
+}
+
+/**
+ * Rich graph: Organization, WebSite, key WebPages (home / about / contact for sitelink-style clarity), ProfessionalService.
+ * Sitelinks are chosen by Google; this aligns titles/descriptions with how you want the brand to appear.
+ */
 export function jsonLdOrganizationAndWebsite(): object {
-  const url = getSiteUrl();
+  const url = getSiteUrl().replace(/\/$/, "");
+  const home = routes.home;
+  const about = routes.about;
+  const contact = routes.contact;
+
+  const homePageUrl = pageUrl(url, "/");
+  const aboutPageUrl = pageUrl(url, about.path);
+  const contactPageUrl = pageUrl(url, contact.path);
+
+  const webPageHome = {
+    "@type": "WebPage",
+    "@id": `${homePageUrl}#webpage`,
+    url: homePageUrl,
+    name: sitelinkLabelByRoute.home,
+    description: home.description,
+    isPartOf: { "@id": `${url}/#website` },
+    about: { "@id": `${url}/#organization` },
+  };
+
+  const webPageAbout = {
+    "@type": "WebPage",
+    "@id": `${aboutPageUrl}#webpage`,
+    url: aboutPageUrl,
+    name: sitelinkLabelByRoute.about,
+    description: about.description,
+    isPartOf: { "@id": `${url}/#website` },
+    about: { "@id": `${url}/#organization` },
+  };
+
+  const webPageContact = {
+    "@type": "WebPage",
+    "@id": `${contactPageUrl}#webpage`,
+    url: contactPageUrl,
+    name: sitelinkLabelByRoute.contact,
+    description: contact.description,
+    isPartOf: { "@id": `${url}/#website` },
+  };
+
   return {
     "@context": "https://schema.org",
     "@graph": [
@@ -135,29 +193,55 @@ export function jsonLdOrganizationAndWebsite(): object {
         "@id": `${url}/#organization`,
         name: "Fable Face Paint",
         url,
-        description:
-          "Professional mobile face painting and event artistry serving Toronto and the Greater Toronto Area (GTA).",
-        areaServed: {
-          "@type": "AdministrativeArea",
-          name: "Greater Toronto Area",
-        },
+        description: home.description,
+        areaServed: [
+          { "@type": "City", name: "Toronto" },
+          { "@type": "AdministrativeArea", name: "Greater Toronto Area" },
+          { "@type": "State", name: "Ontario" },
+        ],
+        sameAs: ["https://www.instagram.com/fablefacepaint/"],
       },
       {
         "@type": "WebSite",
         "@id": `${url}/#website`,
         url,
         name: "Fable Face Paint",
+        alternateName: "Fable Face Paint Toronto",
+        description: home.description,
         publisher: { "@id": `${url}/#organization` },
         inLanguage: "en-CA",
+        hasPart: [{ "@id": webPageHome["@id"] }, { "@id": webPageAbout["@id"] }, { "@id": webPageContact["@id"] }],
       },
+      webPageHome,
+      webPageAbout,
+      webPageContact,
       {
         "@type": "ProfessionalService",
         "@id": `${url}/#service`,
         name: "Fable Face Paint",
         url,
-        serviceType: "Face painting and event entertainment",
+        serviceType: ["Face painting", "Body painting", "Glitter tattoos", "Event entertainment"],
         areaServed: ["Toronto", "Greater Toronto Area", "Ontario, Canada"],
         provider: { "@id": `${url}/#organization` },
+      },
+      {
+        "@type": "ItemList",
+        "@id": `${url}/#highlight-pages`,
+        name: "Key pages",
+        itemListElement: [
+          {
+            "@type": "ListItem",
+            position: 1,
+            name: sitelinkLabelByRoute.about,
+            url: aboutPageUrl,
+          },
+          {
+            "@type": "ListItem",
+            position: 2,
+            name: sitelinkLabelByRoute.contact,
+            url: contactPageUrl,
+          },
+        ],
       },
     ],
   };

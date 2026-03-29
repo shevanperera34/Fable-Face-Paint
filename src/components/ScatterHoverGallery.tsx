@@ -1,5 +1,7 @@
+"use client";
+
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { encodePublicAssetPath } from "../utils/encodePublicAssetPath";
+import { encodePublicAssetPath, type BundledImageSrc } from "../utils/encodePublicAssetPath";
 
 type Rotation = {
   row: number;
@@ -9,7 +11,7 @@ type Rotation = {
 };
 
 type ScatterHoverGalleryProps = {
-  images: string[];
+  images: BundledImageSrc[];
   columns?: number;
   cardWidth?: number;
   cardHeight?: number;
