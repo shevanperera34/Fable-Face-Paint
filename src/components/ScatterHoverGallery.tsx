@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { encodePublicAssetPath } from "../utils/encodePublicAssetPath";
 
 type Rotation = {
   row: number;
@@ -142,7 +143,11 @@ export default function ScatterHoverGallery({
                   style={!isFirstRender ? getPostcardStyle(rowIndex, imageIndex) : { width: `${cardWidth}px`, height: `${cardHeight}px` }}
                 >
                   <div className="ffp-postcard__front">
-                    <img src={image} alt={`Gallery ${rowIndex * columns + imageIndex + 1}`} className="ffp-postcard__img" />
+                    <img
+                      src={encodePublicAssetPath(image)}
+                      alt={`Gallery ${rowIndex * columns + imageIndex + 1}`}
+                      className="ffp-postcard__img"
+                    />
                   </div>
                 </div>
               </div>

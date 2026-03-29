@@ -40,6 +40,7 @@ import corporateLogo6 from "./assets/Corporate Logos/images__1_-removebg-preview
 import corporateLogo7 from "./assets/Corporate Logos/Seneca-logo.svg.png";
 import corporateLogo8 from "./assets/Corporate Logos/Untitled design (12).png";
 import { eventPicVerticalUrls, serviceAssetEntries } from "./generated/imageManifests";
+import { encodePublicAssetPath } from "./utils/encodePublicAssetPath";
 
 const homeGalleryImages = [galleryImage1, galleryImage2, galleryImage3, galleryImage4, galleryImage5, galleryImage6, galleryImage7, galleryImage8];
 const beltAwardImages = [award1, award2, award3, awardWinner2026, award4, award5, award6];
@@ -141,7 +142,7 @@ function VerticalEventSwipeCarousel({
       }}
     >
       <img
-        src={carouselImages[activeIndex]}
+        src={encodePublicAssetPath(carouselImages[activeIndex]!)}
         alt={`Event photo ${activeIndex + 1}`}
         style={{
           position: "absolute",
@@ -275,7 +276,7 @@ function HomeGalleryRotationViewport({
       }}
     >
       <img
-        src={src}
+        src={encodePublicAssetPath(src)}
         alt="Event gallery image"
         style={{
           width: "100%",
@@ -500,7 +501,7 @@ const HomePage: React.FC = () => {
           style={{
             position: "absolute",
             inset: 0,
-            backgroundImage: `url(${heroFrameIllustration})`,
+            backgroundImage: `url("${encodePublicAssetPath(heroFrameIllustration)}")`,
             backgroundSize: "110% auto",
             backgroundPosition: "center -28px",
             backgroundRepeat: "no-repeat",
@@ -533,7 +534,7 @@ const HomePage: React.FC = () => {
             }}
           >
             <img
-              src={heroCenterLogo}
+              src={encodePublicAssetPath(heroCenterLogo)}
               alt="Fable Face Paint logo"
               style={{
                 width: "100%",
@@ -660,7 +661,7 @@ const HomePage: React.FC = () => {
                 }}
               >
                 <img
-                  src={milenaImg}
+                  src={encodePublicAssetPath(milenaImg)}
                   alt="Milena, lead artist"
                   style={{
                     width: 126,
@@ -898,7 +899,7 @@ const HomePage: React.FC = () => {
                   {beltAwardImages.map((src, index) => (
                     <img
                       key={`award-belt-${index}`}
-                      src={src}
+                      src={encodePublicAssetPath(src)}
                       alt={`Award badge ${index + 1}`}
                       style={{
                         flex: "0 0 auto",
@@ -1052,7 +1053,7 @@ const HomePage: React.FC = () => {
                     }}
                   >
                     <img
-                      src={logo.src}
+                      src={encodePublicAssetPath(logo.src)}
                       alt={`Partner logo ${index + 1}`}
                       style={{
                         height: isCompactLayout ? 42 : 52,

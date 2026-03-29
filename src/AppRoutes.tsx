@@ -1,4 +1,5 @@
 import { Navigate, Route, Routes } from "react-router-dom";
+import ScrollToTop from "./components/ScrollToTop";
 import HomePage from "./HomePage";
 import AboutPage from "./pages/AboutPage";
 import ContactPage from "./pages/ContactPage";
@@ -10,7 +11,9 @@ import SmallEventsPage from "./pages/SmallEventsPage";
 
 export function AppRoutes() {
   return (
-    <Routes>
+    <>
+      <ScrollToTop />
+      <Routes>
       <Route path="/" element={<HomePage />} />
       <Route path="/small-events" element={<SmallEventsPage />} />
       <Route path="/birthdays" element={<Navigate to="/small-events" replace />} />
@@ -23,5 +26,6 @@ export function AppRoutes() {
       <Route path="/contact" element={<ContactPage />} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
+    </>
   );
 }

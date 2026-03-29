@@ -15,6 +15,7 @@ import {
   eventPicVerticalUrls,
   serviceAssetEntries,
 } from "../generated/imageManifests";
+import { encodePublicAssetPath } from "../utils/encodePublicAssetPath";
 
 type GalleryItem = {
   src: string;
@@ -60,7 +61,7 @@ const GalleryPage: React.FC = () => {
             width: "100vw",
             marginLeft: "calc(50% - 50vw)",
             marginRight: "calc(50% - 50vw)",
-            backgroundImage: `linear-gradient(108deg, rgba(8,12,18,0.84) 0%, rgba(8,12,18,0.62) 48%, rgba(8,12,18,0.80) 100%), url(${heroBgPink})`,
+            backgroundImage: `linear-gradient(108deg, rgba(8,12,18,0.84) 0%, rgba(8,12,18,0.62) 48%, rgba(8,12,18,0.80) 100%), url("${encodePublicAssetPath(heroBgPink)}")`,
             backgroundSize: "cover",
             backgroundPosition: "center",
             borderBottom: "1px solid rgba(255,255,255,0.14)",
@@ -213,7 +214,7 @@ const GalleryPage: React.FC = () => {
                 }}
               >
                 <img
-                  src={item.src}
+                  src={encodePublicAssetPath(item.src)}
                   alt={`${item.tag} image ${index + 1}`}
                   style={{
                     width: "100%",

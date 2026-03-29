@@ -9,6 +9,36 @@ import { fileURLToPath } from "url";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const root = path.join(__dirname, "..");
 
+function getAssetUrlPrefix() {
+  const base = (process.env.BASE_PATH ?? "").trim().replace(/\/$/, "");
+  return base ? `${base}/assets/` : "/assets/";
+}
+
+/** esbuild file loader emits ../../public/assets/... for the SSR bundle; in HTML the browser resolves that to /public/assets/... (404). */
+function rewriteServerBundleAssetUrls(serverFile) {
+  let code = fs.readFileSync(serverFile, "utf8");
+  const prefix = getAssetUrlPrefix();
+  const pairs = [
+    [`"../../public/assets/`, `"${prefix}`],
+    [`'../../public/assets/`, `'${prefix}`],
+    [`"/../../public/assets/`, `"${prefix}`],
+    [`'/../../public/assets/`, `'${prefix}`],
+  ];
+  for (const [from, to] of pairs) {
+    if (code.includes(from)) code = code.split(from).join(to);
+  }
+  fs.writeFileSync(serverFile, code);
+}
+
+/** Client bundle uses ../assets/... (relative to /js/). That mismatches SSR img src and can confuse hydration; use the same absolute /assets/ prefix. */
+function rewriteClientBundleAssetUrls(jsFile) {
+  let code = fs.readFileSync(jsFile, "utf8");
+  const prefix = getAssetUrlPrefix();
+  code = code.split(`"../assets/`).join(`"${prefix}`);
+  code = code.split(`'../assets/`).join(`'${prefix}`);
+  fs.writeFileSync(jsFile, code);
+}
+
 const fileLoaders = {
   ".png": "file",
   ".jpg": "file",
@@ -50,7 +80,6 @@ async function buildCss() {
 }
 
 async function buildClient() {
-  const basePath = process.env.BASE_PATH ?? "";
   const result = await esbuild.build({
     entryPoints: [path.join(root, "src", "main.tsx")],
     bundle: true,
@@ -76,14 +105,16 @@ async function buildClient() {
   }
   const jsPath = jsEntry[0].split(path.sep).join("/");
   const rel = path.relative(path.join(root, "public"), jsPath).split(path.sep).join("/");
+  rewriteClientBundleAssetUrls(path.join(root, "public", rel.split("/").join(path.sep)));
   return `/${rel}`;
 }
 
 async function buildServer() {
+  const serverOut = path.join(root, "dist", "server", "vercel-app.mjs");
   await esbuild.build({
     entryPoints: [path.join(root, "server", "apiEntry.ts")],
     bundle: true,
-    outfile: path.join(root, "dist", "server", "vercel-app.mjs"),
+    outfile: serverOut,
     format: "esm",
     platform: "node",
     target: "node20",
@@ -92,6 +123,7 @@ async function buildServer() {
     assetNames: "../../public/assets/[name]-[hash]",
     packages: "external",
   });
+  rewriteServerBundleAssetUrls(serverOut);
 }
 
 function writeSitemap(siteUrl) {

@@ -27,6 +27,7 @@ import corporateLogo6 from "../assets/Corporate Logos/images__1_-removebg-previe
 import corporateLogo7 from "../assets/Corporate Logos/Seneca-logo.svg.png";
 import corporateLogo8 from "../assets/Corporate Logos/Untitled design (12).png";
 import { allEventPicsSorted, serviceAssetEntries } from "../generated/imageManifests";
+import { encodePublicAssetPath } from "../utils/encodePublicAssetPath";
 
 type PricingDisplayCard = {
   name: string;
@@ -202,14 +203,14 @@ const corporateGoogleReviews = [
 ];
 
 const corporateLogoImages = [
-  { src: corporateLogo1, scale: 1.08 },
-  { src: corporateLogo2, scale: 1.08 },
-  { src: corporateLogo3, scale: 1.04 },
-  { src: corporateLogo4, scale: 1.02 },
-  { src: corporateLogo5, scale: 1.28 },
-  { src: corporateLogo6, scale: 1.22 },
-  { src: corporateLogo7, scale: 1.02 },
-  { src: corporateLogo8, scale: 1.0 },
+  { src: corporateLogo1 },
+  { src: corporateLogo2 },
+  { src: corporateLogo3 },
+  { src: corporateLogo4 },
+  { src: corporateLogo5 },
+  { src: corporateLogo6 },
+  { src: corporateLogo7 },
+  { src: corporateLogo8 },
 ];
 
 const allEventPics = allEventPicsSorted;
@@ -230,11 +231,11 @@ function RotatingCorporateLogoPair({
   logos,
   isCompactLayout,
 }: {
-  logos: { src: string; scale: number }[];
+  logos: { src: string }[];
   isCompactLayout: boolean;
 }) {
   const [activeLogoStart, setActiveLogoStart] = useState(0);
-  const safeLogos = logos.length > 0 ? logos : [{ src: "", scale: 1 }];
+  const safeLogos = logos.length > 0 ? logos : [{ src: "" }];
   const total = safeLogos.length;
 
   const goNext = useCallback(() => {
@@ -248,10 +249,7 @@ function RotatingCorporateLogoPair({
     return () => window.clearInterval(interval);
   }, [goNext, total]);
 
-  const visible = [safeLogos[activeLogoStart % total], safeLogos[(activeLogoStart + 1) % total]].filter(Boolean) as {
-    src: string;
-    scale: number;
-  }[];
+  const visible = [safeLogos[activeLogoStart % total], safeLogos[(activeLogoStart + 1) % total]].filter(Boolean) as { src: string }[];
 
   return (
     <div
@@ -267,7 +265,7 @@ function RotatingCorporateLogoPair({
       }}
     >
       <div style={{ fontSize: 12, letterSpacing: "0.12em", textTransform: "uppercase", opacity: 0.72, fontFamily: uiFont }}>Trusted by teams like</div>
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, alignItems: "center" }}>
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, alignItems: "stretch" }}>
         {visible.map((logo, index) => (
           <div
             key={`hero-logo-${activeLogoStart}-${index}`}
@@ -276,22 +274,26 @@ function RotatingCorporateLogoPair({
               border: "1px solid rgba(255,255,255,0.14)",
               background: "rgba(255,255,255,0.06)",
               minHeight: isCompactLayout ? 92 : 110,
-              display: "grid",
-              placeItems: "center",
-              padding: "10px",
+              height: isCompactLayout ? 92 : 110,
+              overflow: "hidden",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              padding: "12px 14px",
+              boxSizing: "border-box",
             }}
           >
             {logo.src ? (
               <img
-                src={logo.src}
+                src={encodePublicAssetPath(logo.src)}
                 alt={`Corporate partner ${index + 1}`}
                 style={{
-                  width: "100%",
-                  maxWidth: 136,
+                  maxWidth: "100%",
+                  maxHeight: "100%",
+                  width: "auto",
                   height: "auto",
                   objectFit: "contain",
-                  transform: `scale(${logo.scale})`,
-                  transformOrigin: "center",
+                  objectPosition: "center",
                   display: "block",
                 }}
               />
@@ -581,7 +583,7 @@ function LargeEventsServiceSpotlight({ isCompactLayout }: { isCompactLayout: boo
           }}
         >
           <img
-            src={activeItem.image}
+            src={encodePublicAssetPath(activeItem.image)}
             alt={`${activeItem.serviceName} preview`}
             style={{
               width: "100%",
@@ -630,7 +632,7 @@ const LargeEventsPage: React.FC = () => {
 
   return (
     <PageFrame pageSlug="corporate">
-      <div style={{ maxWidth: contentMaxWidth, margin: "0 auto", padding: "26px 18px" }}>
+      <div style={{ maxWidth: contentMaxWidth, margin: "0 auto", padding: "0 18px 26px" }}>
         <div style={{ display: "grid", gap: 0 }}>
           <div
             style={{
@@ -638,10 +640,11 @@ const LargeEventsPage: React.FC = () => {
               width: "100vw",
               marginLeft: "calc(50% - 50vw)",
               marginRight: "calc(50% - 50vw)",
+              marginTop: 0,
               borderRadius: 0,
               overflow: "hidden",
               minHeight: isCompactLayout ? "min(70vh, 560px)" : "min(76vh, 740px)",
-              backgroundImage: `linear-gradient(105deg, rgba(6,10,14,0.78) 0%, rgba(6,10,14,0.58) 44%, rgba(6,10,14,0.74) 100%), url(${largeEventsHeroBackground})`,
+              backgroundImage: `linear-gradient(105deg, rgba(6,10,14,0.78) 0%, rgba(6,10,14,0.58) 44%, rgba(6,10,14,0.74) 100%), url("${encodePublicAssetPath(largeEventsHeroBackground)}")`,
               backgroundSize: "cover",
               backgroundPosition: "center",
               display: "grid",
@@ -769,7 +772,7 @@ const LargeEventsPage: React.FC = () => {
                         }}
                       >
                         <img
-                          src={cardVisualImage}
+                          src={encodePublicAssetPath(cardVisualImage)}
                           alt={`${card.name} event preview`}
                           style={{
                             width: "100%",
